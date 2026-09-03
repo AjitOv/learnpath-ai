@@ -45,26 +45,32 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = () => {
         <h1 className="teacher-greeting-title">Good morning, Ms. Sharma.</h1>
       </div>
 
-      {/* AI Attention Hero Banner (Per Section 13) */}
+      {/* AI Attention Hero Banner (Per Section 12) */}
       <div className="teacher-alert-hero card card-glow-ai animate-slide-up">
         <div className="alert-hero-top">
           <div className="alert-tag-group">
             <AiOrb size={18} state="adapting" />
-            <span className="alert-hero-kicker">YOUR CLASS NEEDS ATTENTION</span>
+            <span className="alert-hero-kicker">WHAT NEEDS ATTENTION?</span>
           </div>
           <span className="alert-student-count-badge">8 Students Flagged</span>
         </div>
 
         <h2 className="alert-hero-headline">8 students are struggling with fractions.</h2>
 
-        <blockquote className="alert-hero-explanation">
-          "Most errors come from one misconception: <strong>students think a larger denominator means a larger fraction (e.g. 1/8 &gt; 1/4)</strong>."
-        </blockquote>
+        <div className="alert-hero-breakdown">
+          <p className="alert-lead-insight">
+            <strong>5 of them share the exact same misconception:</strong> students think a larger denominator means a larger fraction (e.g., <code>1/8 &gt; 1/4</code>).
+          </p>
+          <div className="alert-rec-strip">
+            <Lightbulb size={16} className="rec-bulb-icon" />
+            <span><strong>AI Recommendation:</strong> Deploy a 7-minute visual pizza-slice activity before tomorrow's class to bridge the conceptual gap.</span>
+          </div>
+        </div>
 
         <div className="alert-hero-action-row">
           <button className="btn btn-ai btn-lg" onClick={handleDispatchIntervention}>
             <Send size={16} />
-            <span>Deploy 15-Min Visual Activity to 8 Students</span>
+            <span>Deploy 7-Minute Intervention to 5 Students</span>
           </button>
         </div>
       </div>

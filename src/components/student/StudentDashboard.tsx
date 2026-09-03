@@ -9,7 +9,10 @@ import {
   ChevronRight,
   TrendingUp,
   BrainCircuit,
-  Award
+  Award,
+  CalendarCheck,
+  Zap,
+  Target
 } from 'lucide-react';
 import { StudentProfile, Language, ConceptMastery } from '../../types';
 import { AiOrb } from '../common/AiOrb';
@@ -41,44 +44,46 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
   const decimalScore = decimalsConcept?.overallScore || 71;
 
   // Circular progress math (circumference = 2 * PI * r)
-  const radius = 48;
+  const radius = 46;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (decimalScore / 100) * circumference;
 
   return (
     <div className="student-command-center container">
-      {/* Top Editorial Greeting */}
+      {/* Top Editorial Hero Greeting (Section 8) */}
       <div className="command-greeting-row animate-slide-up">
-        <span className="command-kicker">PERSONALIZED AI COMMAND CENTER</span>
+        <span className="command-kicker">AI COMMAND CENTER</span>
         <h1 className="student-greeting-title">Good morning, {profile.name.split(' ')[0]}.</h1>
       </div>
 
-      {/* TODAY'S FOCUS: Immersive Radial Focal Card (Per Section 6) */}
+      {/* TODAY'S FOCUS: High-Yield Focal Card (Section 8) */}
       <div className="focus-mission-card card card-glow-ai animate-slide-up">
         <div className="mission-content-left">
           <div className="mission-tag-row">
-            <span className="mission-tag">TODAY'S FOCUS</span>
+            <span className="mission-kicker-tag">TODAY’S FOCUS</span>
             <span className="badge badge-ai">Adaptive High-Yield</span>
           </div>
 
-          <h2 className="mission-headline">MASTER DECIMALS</h2>
-          <p className="mission-status-sub">
-            You're <strong>{decimalScore}%</strong> there. Today we focus on converting word problems into unit rates.
+          <h2 className="mission-headline">Decimal Word Problems</h2>
+          
+          {/* Supporting explanation per Section 8 */}
+          <p className="mission-supporting-text">
+            “You understand decimal operations, but you're still confusing place value when decimals appear inside word problems.”
           </p>
 
-          <div className="mission-meta-chips">
-            <span className="meta-chip"><Clock size={13} /> 12 min</span>
-            <span className="meta-chip">• 4 concepts</span>
-            <span className="meta-chip">• Adaptive difficulty</span>
+          <div className="mission-meta-strip">
+            <span className="meta-item"><Clock size={13} /> 12 min</span>
+            <span className="meta-item">• 4 concepts</span>
+            <span className="meta-item">• Adaptive difficulty</span>
           </div>
 
           <button className="btn btn-ai btn-lg continue-mission-btn" onClick={onContinueLearning}>
             <span>Continue Learning</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={17} />
           </button>
         </div>
 
-        {/* Circular / Radial Progress Visualization */}
+        {/* Circular Radial Mastery Meter */}
         <div className="radial-progress-zone">
           <svg className="radial-svg" width="130" height="130" viewBox="0 0 120 120">
             <circle
@@ -106,7 +111,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         </div>
       </div>
 
-      {/* AI CONVERSATIONAL MESSAGE (Directly underneath per Section 6) */}
+      {/* AI Conversational Insight with "Show me why" */}
       <div className="ai-coach-message-card card animate-slide-up">
         <div className="ai-msg-top">
           <div className="ai-msg-identity">
@@ -130,26 +135,26 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
             <div className="reasoning-step">
               <span className="step-bullet">1</span>
               <div>
-                <strong>Calculations Verified:</strong> Your speed on <code>0.75 × 20</code> is 94% accurate.
+                <strong>Calculations Verified:</strong> Your speed and accuracy on pure calculation <code>0.75 × 20</code> is 94%.
               </div>
             </div>
             <div className="reasoning-step">
               <span className="step-bullet">2</span>
               <div>
-                <strong>Semantic Bottleneck:</strong> In currency scenarios (e.g. ₹4.50/m ribbon), you previously added unit rates rather than multiplying.
+                <strong>Semantic Bottleneck:</strong> In currency scenarios (e.g., change from ₹50), you previously added unit rates rather than subtracting.
               </div>
             </div>
             <div className="reasoning-step">
               <span className="step-bullet">3</span>
               <div>
-                <strong>Adaptive Action:</strong> Today's roadmap inserted a 3-step currency scaffolding widget.
+                <strong>Adaptive Action:</strong> Today's practice questions insert receipt-column scaffolding before jumping into multi-step problems.
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* SIGNATURE KNOWLEDGE MAP: THE LEARNING GRAPH™ (Section 7 & 23) */}
+      {/* SIGNATURE KNOWLEDGE MAP: THE LEARNING GRAPH™ (Section 4 & 8) */}
       <div className="learning-graph-section animate-slide-up">
         <LearningGraph
           concepts={concepts}
@@ -159,69 +164,110 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         />
       </div>
 
-      {/* SOPHISTICATED MASTERY BREAKDOWN (Section 11) */}
-      <div className="mastery-overview-card card animate-slide-up">
-        <div className="mastery-card-header">
-          <div>
-            <span className="mastery-kicker">CALIBRATED ASSESSMENT</span>
-            <h3>YOUR OVERALL MASTERY</h3>
-          </div>
-          <div className="mastery-big-score">
-            <span>74%</span>
-          </div>
-        </div>
-
-        <div className="mastery-horizontal-breakdown">
-          <div className="mastery-factor">
-            <div className="factor-top">
-              <span>Understanding</span>
-              <strong>82%</strong>
-            </div>
-            <div className="progress-bar-container">
-              <div className="progress-bar-fill progress-bar-ai" style={{ width: '82%' }} />
-            </div>
+      {/* RECENT PROGRESS & 4-DIMENSION MASTERY CALIBRATION */}
+      <div className="mastery-dashboard-grid animate-slide-up">
+        {/* Recent Progress Milestones */}
+        <div className="recent-progress-card card">
+          <div className="card-top-title">
+            <CalendarCheck size={16} className="title-icon" />
+            <h3>Recent Progress</h3>
           </div>
 
-          <div className="mastery-factor">
-            <div className="factor-top">
-              <span>Application</span>
-              <strong>71%</strong>
+          <div className="milestones-vertical-list">
+            <div className="milestone-item completed">
+              <div className="milestone-dot-check">
+                <CheckCircle2 size={14} />
+              </div>
+              <div className="milestone-details">
+                <span className="milestone-name">Algebra Foundations</span>
+                <span className="milestone-status">Mastered (91%) • 3 days ago</span>
+              </div>
             </div>
-            <div className="progress-bar-container">
-              <div className="progress-bar-fill progress-bar-ai" style={{ width: '71%' }} />
-            </div>
-          </div>
 
-          <div className="mastery-factor">
-            <div className="factor-top">
-              <span>Accuracy</span>
-              <strong>78%</strong>
+            <div className="milestone-item completed">
+              <div className="milestone-dot-check">
+                <CheckCircle2 size={14} />
+              </div>
+              <div className="milestone-details">
+                <span className="milestone-name">Fractions Bridge</span>
+                <span className="milestone-status">Mastered (82%) • Yesterday</span>
+              </div>
             </div>
-            <div className="progress-bar-container">
-              <div className="progress-bar-fill progress-bar-ai" style={{ width: '78%' }} />
-            </div>
-          </div>
 
-          <div className="mastery-factor">
-            <div className="factor-top">
-              <span>Retention</span>
-              <strong>61%</strong>
-            </div>
-            <div className="progress-bar-container">
-              <div className="progress-bar-fill progress-bar-ai" style={{ width: '61%' }} />
+            <div className="milestone-item active">
+              <div className="milestone-dot-active" />
+              <div className="milestone-details">
+                <span className="milestone-name">Decimal Word Problems</span>
+                <span className="milestone-status active">Today's Mission • 71% Complete</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mastery-encouragement-footer">
-          <Sparkles size={16} className="encourage-sparkle" />
-          <span>You're close to mastery. Completing 1 more session unlocks the Class 10 Advanced tier.</span>
+        {/* 4-Dimension Mastery Calibration */}
+        <div className="mastery-overview-card card">
+          <div className="mastery-card-header">
+            <div>
+              <span className="mastery-kicker">CALIBRATED ASSESSMENT</span>
+              <h3>Your Overall Mastery</h3>
+            </div>
+            <div className="mastery-big-score">
+              <span>74%</span>
+            </div>
+          </div>
+
+          <div className="mastery-factors-bars">
+            <div className="factor-row">
+              <div className="factor-top">
+                <span>Understanding</span>
+                <strong>85%</strong>
+              </div>
+              <div className="progress-bar-container">
+                <div className="progress-bar-fill progress-bar-ai" style={{ width: '85%' }} />
+              </div>
+            </div>
+
+            <div className="factor-row">
+              <div className="factor-top">
+                <span>Application</span>
+                <strong>71%</strong>
+              </div>
+              <div className="progress-bar-container">
+                <div className="progress-bar-fill progress-bar-ai" style={{ width: '71%' }} />
+              </div>
+            </div>
+
+            <div className="factor-row">
+              <div className="factor-top">
+                <span>Accuracy</span>
+                <strong>78%</strong>
+              </div>
+              <div className="progress-bar-container">
+                <div className="progress-bar-fill progress-bar-ai" style={{ width: '78%' }} />
+              </div>
+            </div>
+
+            <div className="factor-row">
+              <div className="factor-top">
+                <span>Retention</span>
+                <strong>61%</strong>
+              </div>
+              <div className="progress-bar-container">
+                <div className="progress-bar-fill progress-bar-ai" style={{ width: '61%' }} />
+              </div>
+            </div>
+          </div>
+
+          <div className="mastery-encouragement-footer">
+            <Sparkles size={15} className="encourage-sparkle" />
+            <span>You're close to mastery. Completing 1 more session unlocks the Class 10 Advanced tier.</span>
+          </div>
         </div>
       </div>
 
       <style>{`
         .student-command-center {
-          padding: 2.5rem 1.5rem 5rem;
+          padding: 2.5rem 1.5rem 6rem;
           display: flex;
           flex-direction: column;
           gap: 2rem;
@@ -236,10 +282,9 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
         .command-kicker {
           font-size: 0.72rem;
-          font-weight: 700;
+          font-weight: 800;
           color: var(--accent-ai);
           letter-spacing: 0.08em;
-          text-transform: uppercase;
         }
 
         .student-greeting-title {
@@ -255,6 +300,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           padding: 2.25rem 2.5rem;
           background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-surface) 100%);
           border: 1px solid var(--border-ai);
+          border-radius: var(--radius-xl);
           flex-wrap: wrap;
           gap: 2rem;
         }
@@ -272,7 +318,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           gap: 0.5rem;
         }
 
-        .mission-tag {
+        .mission-kicker-tag {
           font-size: 0.7rem;
           font-weight: 800;
           letter-spacing: 0.08em;
@@ -286,17 +332,13 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           color: var(--text-primary);
         }
 
-        .mission-status-sub {
+        .mission-supporting-text {
           font-size: 1.05rem;
           color: var(--text-secondary);
-          line-height: 1.5;
+          line-height: 1.55;
         }
 
-        .mission-status-sub strong {
-          color: var(--text-primary);
-        }
-
-        .mission-meta-chips {
+        .mission-meta-strip {
           display: flex;
           align-items: center;
           gap: 0.75rem;
@@ -304,7 +346,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           color: var(--text-muted);
         }
 
-        .meta-chip {
+        .meta-item {
           display: flex;
           align-items: center;
           gap: 0.3rem;
@@ -338,7 +380,6 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
 
         .radial-fill {
           fill: none;
-          stroke: url(#neuralBranchGrad);
           stroke: var(--accent-ai);
           stroke-linecap: round;
           transition: stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -365,7 +406,6 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           color: var(--text-muted);
           text-transform: uppercase;
           font-weight: 700;
-          margin-top: 2px;
         }
 
         /* AI Message Card */
@@ -402,9 +442,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           transition: opacity var(--transition-fast);
         }
 
-        .show-why-btn:hover {
-          opacity: 0.8;
-        }
+        .show-why-btn:hover { opacity: 0.8; }
 
         .ai-msg-text {
           font-size: 1.05rem;
@@ -432,9 +470,7 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           color: var(--text-secondary);
         }
 
-        .reasoning-step strong {
-          color: var(--text-primary);
-        }
+        .reasoning-step strong { color: var(--text-primary); }
 
         .step-bullet {
           width: 18px;
@@ -451,12 +487,88 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
           margin-top: 2px;
         }
 
-        /* Mastery Overview Card */
-        .mastery-overview-card {
-          padding: 2rem;
+        /* Grid: Recent Progress & Mastery */
+        .mastery-dashboard-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.3fr;
+          gap: 1.5rem;
+        }
+
+        .recent-progress-card {
+          padding: 1.75rem;
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1.25rem;
+        }
+
+        .card-top-title {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .title-icon { color: var(--accent-ai); }
+
+        .card-top-title h3 {
+          font-size: 1.15rem;
+          color: var(--text-primary);
+        }
+
+        .milestones-vertical-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .milestone-item {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.75rem;
+        }
+
+        .milestone-dot-check {
+          color: var(--mastery-high);
+          margin-top: 2px;
+        }
+
+        .milestone-dot-active {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: var(--accent-ai);
+          box-shadow: 0 0 8px var(--accent-ai);
+          margin-top: 4px;
+          margin-left: 2px;
+        }
+
+        .milestone-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.15rem;
+        }
+
+        .milestone-name {
+          font-size: 0.88rem;
+          font-weight: 700;
+          color: var(--text-primary);
+        }
+
+        .milestone-status {
+          font-size: 0.75rem;
+          color: var(--text-muted);
+        }
+
+        .milestone-status.active {
+          color: var(--accent-ai);
+          font-weight: 600;
+        }
+
+        /* Mastery Overview Card */
+        .mastery-overview-card {
+          padding: 1.75rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
         }
 
         .mastery-card-header {
@@ -473,60 +585,55 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({
         }
 
         .mastery-card-header h3 {
-          font-size: 1.25rem;
+          font-size: 1.2rem;
           color: var(--text-primary);
         }
 
         .mastery-big-score {
-          font-size: 2.4rem;
+          font-size: 2.2rem;
           font-weight: 800;
           font-family: var(--font-display);
           color: var(--text-primary);
         }
 
-        .mastery-horizontal-breakdown {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1.5rem;
-        }
-
-        .mastery-factor {
+        .mastery-factors-bars {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.75rem;
+        }
+
+        .factor-row {
+          display: flex;
+          flex-direction: column;
+          gap: 0.3rem;
         }
 
         .factor-top {
           display: flex;
           justify-content: space-between;
-          font-size: 0.8rem;
+          font-size: 0.78rem;
           color: var(--text-secondary);
         }
 
-        .factor-top strong {
-          color: var(--text-primary);
-        }
+        .factor-top strong { color: var(--text-primary); }
 
         .mastery-encouragement-footer {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
           background: var(--bg-surface);
           border: 1px solid var(--border-subtle);
           border-radius: var(--radius-md);
-          padding: 0.85rem 1.1rem;
-          font-size: 0.86rem;
+          padding: 0.75rem 1rem;
+          font-size: 0.82rem;
           color: var(--text-secondary);
         }
 
-        .encourage-sparkle {
-          color: #fbbf24;
-          flex-shrink: 0;
-        }
+        .encourage-sparkle { color: #fbbf24; flex-shrink: 0; }
 
         @media (max-width: 768px) {
+          .mastery-dashboard-grid { grid-template-columns: 1fr; }
           .focus-mission-card { flex-direction: column; align-items: flex-start; }
-          .mastery-horizontal-breakdown { grid-template-columns: 1fr 1fr; }
         }
       `}</style>
     </div>

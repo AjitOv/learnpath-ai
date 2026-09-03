@@ -40,27 +40,33 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
         </div>
 
         <blockquote className="parent-highlight-quote">
-          "{report.studentName.split(' ')[0]} is becoming noticeably more confident with algebra and real-world money problems."
+          "Aarav is improving quickly in algebra. His biggest challenge this week was applying decimals to real-world problems."
         </blockquote>
 
-        {/* 3 Core Highlights (Strongest, Focus Area, Consistency) */}
+        {/* 4 Clear Narrative Pillars per Section 13 */}
         <div className="parent-key-metrics-grid">
           <div className="metric-tile">
-            <span className="m-tile-lbl">STRONGEST CONCEPT</span>
+            <span className="m-tile-lbl">1. WHAT IMPROVED</span>
             <span className="m-tile-val high">Algebra — 91%</span>
-            <p className="m-tile-sub">Fast symbolic calculation and equation solving.</p>
+            <p className="m-tile-sub">Fast symbolic calculation and strong equation confidence.</p>
           </div>
 
           <div className="metric-tile">
-            <span className="m-tile-lbl">FOCUS AREA</span>
+            <span className="m-tile-lbl">2. WHAT NEEDS ATTENTION</span>
             <span className="m-tile-val focus">Decimals — 71%</span>
-            <p className="m-tile-sub">Jumped from 43% this week after currency analogies.</p>
+            <p className="m-tile-sub">Confusing place value when numbers are wrapped in word problems.</p>
           </div>
 
           <div className="metric-tile">
-            <span className="m-tile-lbl">THIS WEEK</span>
-            <span className="m-tile-val">4 Learning Sessions</span>
-            <p className="m-tile-sub">Maintained a strong 7-day study streak.</p>
+            <span className="m-tile-lbl">3. WHAT AI IS DOING NEXT</span>
+            <span className="m-tile-val">Receipt Scaffolding</span>
+            <p className="m-tile-sub">Sequencing daily 12-min visual column alignment practice.</p>
+          </div>
+
+          <div className="metric-tile">
+            <span className="m-tile-lbl">4. SUGGESTED PARENT ACTION</span>
+            <span className="m-tile-val">Shopping Quick-Check</span>
+            <p className="m-tile-sub">Ask Aarav to calculate change on simple grocery items.</p>
           </div>
         </div>
       </div>
@@ -169,7 +175,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
         .parent-key-metrics-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(4, 1fr);
           gap: 1.25rem;
           border-top: 1px solid var(--border-subtle);
           padding-top: 1.5rem;

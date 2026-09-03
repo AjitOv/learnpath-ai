@@ -718,10 +718,55 @@ export const SOCRATIC_DECIMAL_LESSON: SocraticLesson = {
 
 export const ADAPTIVE_PRACTICE_QUESTIONS: PracticeQuestion[] = [
   {
-    id: 'prac-1',
+    id: 'prac-shopkeeper',
     conceptId: 'math-decimals',
     subject: 'Mathematics',
     difficulty: 'Easy',
+    prompt: {
+      en: 'A shopkeeper gives ₹12.50 change from ₹50. What was the bill amount?',
+      hi: 'एक दुकानदार ₹50 में से ₹12.50 वापस देता है। बिल की कुल राशि क्या थी?',
+      mr: 'एका दुकानदाराने ₹50 मधून ₹12.50 सुट्टे परत केले. बिलाची एकूण रक्कम किती होती?',
+    },
+    options: [
+      {
+        id: 'psk-a',
+        text: { en: '₹37.50', hi: '₹37.50', mr: '₹37.50' },
+        isCorrect: true,
+      },
+      {
+        id: 'psk-b',
+        text: { en: '₹62.50 (added 50 + 12.50)', hi: '₹62.50 (50 + 12.50 जोड़ दिया)', mr: '₹62.50 (50 + 12.50 बेरीज केली)' },
+        isCorrect: false,
+        misconceptionTrigger: 'decimal-word-problem-translation',
+      },
+      {
+        id: 'psk-c',
+        text: { en: '₹38.50', hi: '₹38.50', mr: '₹38.50' },
+        isCorrect: false,
+        misconceptionTrigger: 'decimal-length-fallacy',
+      },
+      {
+        id: 'psk-d',
+        text: { en: '₹37.05', hi: '₹37.05', mr: '₹37.05' },
+        isCorrect: false,
+      },
+    ],
+    hint: {
+      en: 'Bill Amount = Total Cash Handed (₹50.00) - Change Received (₹12.50).',
+      hi: 'बिल राशि = दिया गया नकद (₹50.00) - मिला हुआ परिवर्तन (₹12.50)।',
+      mr: 'बिलाची रक्कम = दिलेली रोख (₹50.00) - परत मिळालेले सुट्टे (₹12.50).',
+    },
+    stepByStepSolution: {
+      en: 'Line up place values: 50.00 - 12.50 = 37.50. Exactly. You tracked the decimal place correctly.',
+      hi: 'स्थानिक मान संरेखित करें: 50.00 - 12.50 = 37.50। बिल्कुल सही। आपने दशमलव स्थान का सही मिलान किया।',
+      mr: 'स्थानिक किमती जुळवून घ्या: 50.00 - 12.50 = 37.50. अगदी बरोबर! दशांश स्थळाची अचूक मांडणी केलीस.',
+    },
+  },
+  {
+    id: 'prac-1',
+    conceptId: 'math-decimals',
+    subject: 'Mathematics',
+    difficulty: 'Medium',
     prompt: {
       en: 'A pen costs ₹8.50. How much will 4 such pens cost in total?',
       hi: 'एक पेन की कीमत ₹8.50 है। ऐसे 4 पेनों की कुल कीमत कितनी होगी?',

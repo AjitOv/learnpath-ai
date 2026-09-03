@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { 
   Sparkles, 
-  X, 
   ArrowRight, 
-  Layers, 
-  Target, 
   CheckCircle2, 
-  AlertTriangle,
-  Zap,
-  BookOpen
+  AlertTriangle, 
+  Lock, 
+  Unlock, 
+  BookOpen, 
+  Zap, 
+  Layers, 
+  Target,
+  Brain,
+  Info
 } from 'lucide-react';
 import { ConceptMastery, Language } from '../../types';
+import { AiOrb } from '../common/AiOrb';
 
 interface LearningGraphProps {
   concepts: ConceptMastery[];
@@ -19,14 +23,20 @@ interface LearningGraphProps {
   onOpenConceptPractice?: (conceptId: string) => void;
 }
 
-interface GraphNodePos {
+export type NodeVisualStatus = 'mastered' | 'developing' | 'weak' | 'blocked';
+
+interface GraphNeuralNode {
   id: string;
   name: string;
-  x: number; // percentage in viewBox
+  subject: string;
+  x: number; // percentage in canvas
   y: number;
   score: number;
-  status: 'strong' | 'developing' | 'needs-attention';
+  status: NodeVisualStatus;
+  prerequisites: string[];
   connections: string[];
+  cognitiveMisconception?: string;
+  recommendedAction: 'lesson' | 'practice' | 'prerequisite_first';
 }
 
 export const LearningGraph: React.FC<LearningGraphProps> = ({
@@ -34,305 +44,408 @@ export const LearningGraph: React.FC<LearningGraphProps> = ({
   onOpenConceptLesson,
   onOpenConceptPractice,
 }) => {
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>('math-decimals');
+  const [selectedNodeId, setSelectedNodeId] = useState<string>('math-decimals');
 
-  // Node positions on the knowledge canvas
-  const nodes: GraphNodePos[] = [
+  // Dynamic values based on current student mastery state
+  const decimalScore = concepts.find((c) => c.conceptId === 'math-decimals')?.overallScore || 71;
+  const isDecimalMastered = decimalScore >= 70;
+
+  const neuralNodes: GraphNeuralNode[] = [
     {
       id: 'math-algebra-basic',
       name: 'Algebra Foundations',
-      x: 22,
-      y: 35,
-      score: concepts.find((c) => c.conceptId === 'math-algebra-basic')?.overallScore || 76,
-      status: 'strong',
+      subject: 'Mathematics',
+      x: 20,
+      y: 30,
+      score: 91,
+      status: 'mastered',
+      prerequisites: [],
       connections: ['math-decimals', 'math-ratio'],
+      recommendedAction: 'practice',
     },
     {
       id: 'math-fractions',
       name: 'Fractions',
-      x: 78,
-      y: 35,
-      score: concepts.find((c) => c.conceptId === 'math-fractions')?.overallScore || 82,
-      status: 'strong',
+      subject: 'Mathematics',
+      x: 80,
+      y: 30,
+      score: 82,
+      status: 'mastered',
+      prerequisites: [],
       connections: ['math-decimals'],
+      recommendedAction: 'practice',
     },
     {
       id: 'math-decimals',
       name: 'Decimals',
+      subject: 'Mathematics',
       x: 50,
       y: 52,
-      score: concepts.find((c) => c.conceptId === 'math-decimals')?.overallScore || 71,
-      status: (concepts.find((c) => c.conceptId === 'math-decimals')?.overallScore || 43) >= 70 ? 'strong' : 'needs-attention',
+      score: decimalScore,
+      status: isDecimalMastered ? 'developing' : 'weak',
+      prerequisites: ['math-fractions', 'math-algebra-basic'],
       connections: ['math-word-problems', 'math-ratio'],
+      cognitiveMisconception: 'Understands pure arithmetic; confuses place-value shift in currency word problems.',
+      recommendedAction: isDecimalMastered ? 'practice' : 'lesson',
+    },
+    {
+      id: 'math-ratio',
+      name: 'Ratio & Rates',
+      subject: 'Mathematics',
+      x: 22,
+      y: 75,
+      score: 58,
+      status: 'developing',
+      prerequisites: ['math-algebra-basic'],
+      connections: ['math-word-problems'],
+      cognitiveMisconception: 'Inverts comparison ratio order when unit rates are mixed.',
+      recommendedAction: 'lesson',
     },
     {
       id: 'math-word-problems',
       name: 'Applied Word Problems',
-      x: 50,
-      y: 78,
-      score: (concepts.find((c) => c.conceptId === 'math-decimals')?.overallScore || 43) >= 70 ? 74 : 54,
-      status: (concepts.find((c) => c.conceptId === 'math-decimals')?.overallScore || 43) >= 70 ? 'developing' : 'needs-attention',
+      subject: 'Mathematics',
+      x: 65,
+      y: 80,
+      score: isDecimalMastered ? 74 : 54,
+      status: isDecimalMastered ? 'developing' : 'blocked',
+      prerequisites: ['math-decimals'],
       connections: [],
-    },
-    {
-      id: 'math-ratio',
-      name: 'Ratio & Proportion',
-      x: 24,
-      y: 72,
-      score: concepts.find((c) => c.conceptId === 'math-ratio')?.overallScore || 58,
-      status: 'developing',
-      connections: ['math-word-problems'],
+      cognitiveMisconception: 'Struggles to extract numeric operators from multi-sentence problem statements.',
+      recommendedAction: isDecimalMastered ? 'practice' : 'prerequisite_first',
     },
   ];
 
-  const selectedConcept = concepts.find((c) => c.conceptId === selectedNodeId) || concepts[3]; // default decimals
+  const selectedNode = neuralNodes.find((n) => n.id === selectedNodeId) || neuralNodes[2];
+  const conceptData = concepts.find((c) => c.conceptId === selectedNode.id) || concepts[3];
 
-  const getNodeColor = (score: number) => {
-    if (score >= 80) return 'var(--mastery-high)';
-    if (score >= 65) return 'var(--mastery-med)';
-    return 'var(--mastery-low)';
+  const getNodeColor = (status: NodeVisualStatus) => {
+    switch (status) {
+      case 'mastered': return 'var(--mastery-high)';
+      case 'developing': return 'var(--mastery-med)';
+      case 'weak': return 'var(--mastery-low)';
+      case 'blocked': return 'var(--text-muted)';
+    }
   };
 
   return (
-    <div className="learning-graph-container card">
-      {/* Header */}
-      <div className="graph-header">
-        <div className="graph-title-group">
-          <div className="graph-brand-badge">
-            <span className="live-pulse-dot" />
-            <span>The Learning Graph™</span>
+    <div className="neural-graph-card card card-glow-ai">
+      {/* Top Knowledge Radar Header */}
+      <div className="graph-radar-top">
+        <div className="radar-identity">
+          <div className="radar-pulse-badge">
+            <span className="live-spark-dot" />
+            <span className="radar-tag">THE LEARNING GRAPH™</span>
           </div>
-          <h3>Your Learning Brain</h3>
-          <p className="graph-sub">Interactive neural knowledge model • Tap any node to inspect cognitive dimensions</p>
+          <h3 className="radar-title">Interactive Knowledge Brain</h3>
+          <p className="radar-subtext">
+            AI-mapped neural dependency graph • Dynamic cognitive dimensions update after each session
+          </p>
         </div>
 
-        <div className="graph-legend">
-          <span className="legend-item"><span className="legend-dot green" /> 80%+ Mastered</span>
-          <span className="legend-item"><span className="legend-dot yellow" /> 65-79% Developing</span>
-          <span className="legend-item"><span className="legend-dot red" /> &lt;65% Needs Focus</span>
+        {/* Status Legend */}
+        <div className="radar-legend-bar">
+          <span className="legend-chip">
+            <span className="legend-dot green" /> Mastered (80%+)
+          </span>
+          <span className="legend-chip">
+            <span className="legend-dot yellow" /> Developing (60–79%)
+          </span>
+          <span className="legend-chip">
+            <span className="legend-dot red" /> Weak (&lt;60%)
+          </span>
+          <span className="legend-chip">
+            <Lock size={12} className="legend-lock" /> Blocked Prerequisite
+          </span>
         </div>
       </div>
 
-      {/* Visual Canvas Area */}
-      <div className="graph-stage">
-        <svg className="graph-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+      {/* SVG Neural Brain Canvas */}
+      <div className="neural-stage-canvas">
+        <svg className="neural-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
           <defs>
-            <linearGradient id="neuralBranchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.1" />
+            <linearGradient id="neuralGradStream" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#7c3aed" stopOpacity="0.2" />
             </linearGradient>
-            <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="1.5" result="blur" />
+            <filter id="neuralGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.2" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
-          {/* Connectors between nodes */}
-          {nodes.map((node) =>
-            node.connections.map((targetId) => {
-              const target = nodes.find((n) => n.id === targetId);
+          {/* Render Organic Curved Neural Bridges */}
+          {neuralNodes.map((source) =>
+            source.connections.map((targetId) => {
+              const target = neuralNodes.find((n) => n.id === targetId);
               if (!target) return null;
+
+              // Cubic Bezier curve control points
+              const dx = target.x - source.x;
+              const dy = target.y - source.y;
+              const cx1 = source.x + dx * 0.5;
+              const cy1 = source.y;
+              const cx2 = source.x + dx * 0.5;
+              const cy2 = target.y;
+
+              const isHighlighted = selectedNode.id === source.id || selectedNode.id === target.id;
+              const isTargetBlocked = target.status === 'blocked';
+
               return (
-                <line
-                  key={`${node.id}-${target.id}`}
-                  x1={node.x}
-                  y1={node.y}
-                  x2={target.x}
-                  y2={target.y}
-                  stroke="currentColor"
-                  strokeWidth="0.8"
-                  strokeDasharray="1.5 1.5"
-                  className="neural-line"
-                />
+                <g key={`${source.id}-${target.id}`}>
+                  {/* Background Track */}
+                  <path
+                    d={`M ${source.x} ${source.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${target.x} ${target.y}`}
+                    fill="none"
+                    stroke={isHighlighted ? 'var(--accent-ai)' : 'currentColor'}
+                    strokeWidth={isHighlighted ? '1.2' : '0.75'}
+                    strokeDasharray={isTargetBlocked ? '2 2' : 'none'}
+                    className={`neural-path ${isHighlighted ? 'active' : ''} ${isTargetBlocked ? 'blocked' : ''}`}
+                  />
+                  {/* Animated Neural Pulse Bead */}
+                  {!isTargetBlocked && (
+                    <circle r="1" fill="var(--accent-ai)" className="pulse-bead">
+                      <animateMotion
+                        path={`M ${source.x} ${source.y} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${target.x} ${target.y}`}
+                        dur={`${4 + (source.x % 3)}s`}
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                  )}
+                </g>
               );
             })
           )}
         </svg>
 
-        {/* Render interactive HTML nodes over SVG */}
-        {nodes.map((n) => {
-          const isSelected = selectedNodeId === n.id;
-          const color = getNodeColor(n.score);
+        {/* Interactive Neural HTML Nodes */}
+        {neuralNodes.map((node) => {
+          const isSelected = selectedNode.id === node.id;
+          const statusColor = getNodeColor(node.status);
+          const isBlocked = node.status === 'blocked';
 
           return (
             <div
-              key={n.id}
-              className={`graph-node ${isSelected ? 'selected' : ''}`}
+              key={node.id}
+              className={`brain-node-pill ${isSelected ? 'selected' : ''} status-${node.status}`}
               style={{
-                left: `${n.x}%`,
-                top: `${n.y}%`,
-                borderColor: color,
-                boxShadow: isSelected ? `0 0 24px ${color}` : `0 0 8px rgba(0,0,0,0.5)`,
+                left: `${node.x}%`,
+                top: `${node.y}%`,
+                borderColor: isSelected ? 'var(--accent-ai)' : statusColor,
               }}
-              onClick={() => setSelectedNodeId(n.id)}
+              onClick={() => setSelectedNodeId(node.id)}
+              role="button"
+              tabIndex={0}
             >
-              <span className="node-score" style={{ color }}>{n.score}%</span>
-              <span className="node-label">{n.name}</span>
+              <div className="node-status-marker">
+                {isBlocked ? (
+                  <Lock size={12} className="lock-icon" />
+                ) : (
+                  <span className="status-lum-dot" style={{ background: statusColor, boxShadow: `0 0 8px ${statusColor}` }} />
+                )}
+              </div>
+
+              <div className="node-details">
+                <span className="node-score-num" style={{ color: statusColor }}>
+                  {node.score}%
+                </span>
+                <span className="node-title-txt">{node.name}</span>
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* Selected Node Inspection Drawer / Sheet */}
-      {selectedConcept && (
-        <div className="node-inspector-drawer animate-slide-up">
-          <div className="inspector-header">
-            <div>
-              <span className="inspector-badge">{selectedConcept.subject}</span>
-              <h4 className="inspector-title">{selectedConcept.conceptName}</h4>
-            </div>
-            <div className="inspector-score-pill">
-              <span className="inspector-score-num" style={{ color: getNodeColor(selectedConcept.overallScore) }}>
-                {selectedConcept.overallScore}%
+      {/* Selected Node Cognitive Inspection Drawer */}
+      <div className="node-inspection-drawer animate-slide-up">
+        <div className="drawer-top-row">
+          <div className="drawer-title-group">
+            <span className="drawer-kicker">{selectedNode.subject} • COGNITIVE TELEMETRY</span>
+            <div className="drawer-heading-wrap">
+              <h4 className="drawer-concept-title">{selectedNode.name}</h4>
+              <span className={`badge badge-status-${selectedNode.status}`}>
+                {selectedNode.status === 'mastered' && '✓ Mastered'}
+                {selectedNode.status === 'developing' && '⚡ In Progress'}
+                {selectedNode.status === 'weak' && '⚠️ Needs Focus'}
+                {selectedNode.status === 'blocked' && '🔒 Blocked Prerequisite'}
               </span>
-              <span className="inspector-score-lbl">Mastery</span>
             </div>
           </div>
 
-          {/* 4 Mastery Dimensions Bar List */}
-          <div className="dimensions-bar-list">
-            <div className="dim-row">
-              <span className="dim-lbl">Understanding</span>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill progress-bar-ai" 
-                  style={{ width: `${selectedConcept.dimensions.understanding}%` }} 
-                />
-              </div>
-              <span className="dim-val">{selectedConcept.dimensions.understanding}%</span>
-            </div>
+          <div className="drawer-score-gauge">
+            <span className="gauge-score-value" style={{ color: getNodeColor(selectedNode.status) }}>
+              {selectedNode.score}%
+            </span>
+            <span className="gauge-score-label">Mastery Score</span>
+          </div>
+        </div>
 
-            <div className="dim-row">
-              <span className="dim-lbl">Application</span>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill progress-bar-ai" 
-                  style={{ width: `${selectedConcept.dimensions.application}%` }} 
-                />
-              </div>
-              <span className="dim-val">{selectedConcept.dimensions.application}%</span>
+        {/* 4-Dimension Mastery Bars */}
+        <div className="drawer-dimensions-grid">
+          <div className="dimension-unit">
+            <div className="dim-head">
+              <span>Understanding</span>
+              <strong>{conceptData.dimensions.understanding}%</strong>
             </div>
-
-            <div className="dim-row">
-              <span className="dim-lbl">Accuracy</span>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill progress-bar-ai" 
-                  style={{ width: `${selectedConcept.dimensions.accuracy}%` }} 
-                />
-              </div>
-              <span className="dim-val">{selectedConcept.dimensions.accuracy}%</span>
-            </div>
-
-            <div className="dim-row">
-              <span className="dim-lbl">Retention</span>
-              <div className="progress-bar-container">
-                <div 
-                  className="progress-bar-fill progress-bar-ai" 
-                  style={{ width: `${selectedConcept.dimensions.retention}%` }} 
-                />
-              </div>
-              <span className="dim-val">{selectedConcept.dimensions.retention}%</span>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill progress-bar-ai" style={{ width: `${conceptData.dimensions.understanding}%` }} />
             </div>
           </div>
 
-          {/* Common Mistakes & Remedial Action */}
-          <div className="inspector-mistake-box">
-            <div className="mistake-title">
-              <AlertTriangle size={14} className="mistake-icon" />
-              <span>Diagnosed Cognitive Pattern:</span>
+          <div className="dimension-unit">
+            <div className="dim-head">
+              <span>Application</span>
+              <strong>{conceptData.dimensions.application}%</strong>
             </div>
-            <p className="mistake-text">
-              {selectedConcept.commonMistakes[0] || 'Understands calculations; struggles with word problem formulation.'}
-            </p>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill progress-bar-ai" style={{ width: `${conceptData.dimensions.application}%` }} />
+            </div>
           </div>
 
-          <div className="inspector-actions">
+          <div className="dimension-unit">
+            <div className="dim-head">
+              <span>Accuracy</span>
+              <strong>{conceptData.dimensions.accuracy}%</strong>
+            </div>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill progress-bar-ai" style={{ width: `${conceptData.dimensions.accuracy}%` }} />
+            </div>
+          </div>
+
+          <div className="dimension-unit">
+            <div className="dim-head">
+              <span>Retention</span>
+              <strong>{conceptData.dimensions.retention}%</strong>
+            </div>
+            <div className="progress-bar-container">
+              <div className="progress-bar-fill progress-bar-ai" style={{ width: `${conceptData.dimensions.retention}%` }} />
+            </div>
+          </div>
+        </div>
+
+        {/* Diagnosed Cognitive Misconception */}
+        <div className="drawer-misconception-callout">
+          <div className="misc-callout-header">
+            <AlertTriangle size={15} className="misc-alert-icon" />
+            <strong>Diagnosed Root Cognitive Pattern:</strong>
+          </div>
+          <p className="misc-callout-text">
+            {selectedNode.cognitiveMisconception || conceptData.commonMistakes[0] || 'Understands calculations; struggles with word problem formulation.'}
+          </p>
+        </div>
+
+        {/* Recommended Action Footer */}
+        <div className="drawer-actions-footer">
+          {selectedNode.prerequisites.length > 0 && (
+            <div className="prereq-note">
+              <Info size={14} />
+              <span>Prerequisites: {selectedNode.prerequisites.join(', ')}</span>
+            </div>
+          )}
+
+          <div className="footer-btns-right">
             {onOpenConceptLesson && (
               <button 
                 className="btn btn-secondary btn-sm"
-                onClick={() => onOpenConceptLesson(selectedConcept.conceptId)}
+                onClick={() => onOpenConceptLesson(selectedNode.id)}
               >
                 <BookOpen size={14} />
                 <span>Socratic Lesson</span>
               </button>
             )}
+
             {onOpenConceptPractice && (
               <button 
                 className="btn btn-ai btn-sm"
-                onClick={() => onOpenConceptPractice(selectedConcept.conceptId)}
+                onClick={() => onOpenConceptPractice(selectedNode.id)}
+                disabled={selectedNode.status === 'blocked'}
               >
-                <Zap size={14} />
-                <span>Practice Node →</span>
+                {selectedNode.status === 'blocked' ? (
+                  <>
+                    <Lock size={14} />
+                    <span>Master Decimals First</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap size={14} />
+                    <span>Practice Node →</span>
+                  </>
+                )}
               </button>
             )}
           </div>
         </div>
-      )}
+      </div>
 
       <style>{`
-        .learning-graph-container {
-          position: relative;
-          background: var(--bg-card);
-          border: 1px solid var(--border-subtle);
-          padding: 1.75rem;
+        .neural-graph-card {
+          padding: 2rem;
           display: flex;
           flex-direction: column;
           gap: 1.5rem;
+          position: relative;
           overflow: hidden;
         }
 
-        .graph-header {
+        .graph-radar-top {
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 1.25rem;
         }
 
-        .graph-brand-badge {
+        .radar-identity {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .radar-pulse-badge {
           display: inline-flex;
           align-items: center;
-          gap: 0.4rem;
-          font-size: 0.72rem;
-          font-weight: 700;
-          color: var(--accent-ai);
-          text-transform: uppercase;
-          letter-spacing: 0.06em;
-          margin-bottom: 0.25rem;
+          gap: 0.45rem;
         }
 
-        .live-pulse-dot {
+        .live-spark-dot {
           width: 7px;
           height: 7px;
           border-radius: 50%;
           background: var(--accent-ai);
-          box-shadow: 0 0 8px var(--accent-ai);
-          animation: orbBreathe 2s infinite ease-in-out;
+          box-shadow: 0 0 10px var(--accent-ai);
+          animation: coreBreathe 2s infinite ease-in-out;
         }
 
-        .graph-title-group h3 {
-          font-size: 1.35rem;
+        .radar-tag {
+          font-size: 0.72rem;
+          font-weight: 800;
+          color: var(--accent-ai);
+          letter-spacing: 0.08em;
+        }
+
+        .radar-title {
+          font-size: 1.45rem;
           color: var(--text-primary);
         }
 
-        .graph-sub {
-          font-size: 0.84rem;
+        .radar-subtext {
+          font-size: 0.85rem;
           color: var(--text-muted);
         }
 
-        .graph-legend {
+        .radar-legend-bar {
           display: flex;
           align-items: center;
           gap: 1rem;
-          font-size: 0.75rem;
-          color: var(--text-secondary);
+          flex-wrap: wrap;
         }
 
-        .legend-item {
+        .legend-chip {
           display: flex;
           align-items: center;
           gap: 0.35rem;
+          font-size: 0.75rem;
+          color: var(--text-secondary);
         }
 
         .legend-dot {
@@ -344,19 +457,20 @@ export const LearningGraph: React.FC<LearningGraphProps> = ({
         .legend-dot.green { background: var(--mastery-high); box-shadow: 0 0 6px var(--mastery-high); }
         .legend-dot.yellow { background: var(--mastery-med); box-shadow: 0 0 6px var(--mastery-med); }
         .legend-dot.red { background: var(--mastery-low); box-shadow: 0 0 6px var(--mastery-low); }
+        .legend-lock { color: var(--text-muted); }
 
-        /* Stage */
-        .graph-stage {
+        /* Stage Canvas */
+        .neural-stage-canvas {
           position: relative;
           width: 100%;
-          height: 320px;
-          background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%), var(--bg-surface);
+          height: 350px;
+          background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 75%), var(--bg-surface);
           border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-lg);
+          border-radius: var(--radius-xl);
           overflow: hidden;
         }
 
-        .graph-svg {
+        .neural-svg {
           position: absolute;
           inset: 0;
           width: 100%;
@@ -364,156 +478,232 @@ export const LearningGraph: React.FC<LearningGraphProps> = ({
           pointer-events: none;
         }
 
-        .neural-line {
+        .neural-path {
           color: var(--border-medium);
-          animation: pulseBorder 4s infinite;
+          transition: stroke 0.3s ease;
         }
 
-        .graph-node {
+        .neural-path.active {
+          filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.6));
+        }
+
+        .neural-path.blocked {
+          opacity: 0.35;
+        }
+
+        .pulse-bead {
+          filter: drop-shadow(0 0 4px #6366f1);
+        }
+
+        /* Pill Nodes */
+        .brain-node-pill {
           position: absolute;
           transform: translate(-50%, -50%);
           background: var(--bg-card);
-          border: 2px solid var(--border-medium);
+          border: 1.5px solid var(--border-medium);
           border-radius: var(--radius-full);
-          padding: 0.45rem 0.9rem;
-          cursor: pointer;
+          padding: 0.45rem 0.95rem;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          transition: all var(--transition-fast);
+          gap: 0.55rem;
+          cursor: pointer;
           user-select: none;
           z-index: 2;
+          transition: all var(--transition-fast);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
         }
 
-        .graph-node:hover {
-          transform: translate(-50%, -50%) scale(1.06);
+        .brain-node-pill:hover {
+          transform: translate(-50%, -50%) scale(1.08);
           background: var(--bg-hover);
         }
 
-        .graph-node.selected {
-          transform: translate(-50%, -50%) scale(1.1);
+        .brain-node-pill.selected {
+          transform: translate(-50%, -50%) scale(1.12);
           background: var(--bg-elevated);
-          z-index: 3;
+          box-shadow: 0 0 24px var(--accent-ai-glow);
+          z-index: 4;
         }
 
-        .node-score {
+        .brain-node-pill.status-blocked {
+          opacity: 0.7;
+          border-style: dashed;
+        }
+
+        .node-status-marker {
+          display: flex;
+          align-items: center;
+        }
+
+        .status-lum-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+        }
+
+        .lock-icon { color: var(--text-muted); }
+
+        .node-details {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+        }
+
+        .node-score-num {
+          font-family: var(--font-mono);
           font-size: 0.85rem;
           font-weight: 800;
-          font-family: var(--font-mono);
         }
 
-        .node-label {
-          font-size: 0.8rem;
+        .node-title-txt {
+          font-size: 0.82rem;
           font-weight: 600;
           color: var(--text-primary);
           white-space: nowrap;
         }
 
-        /* Inspector Drawer */
-        .node-inspector-drawer {
+        /* Drawer */
+        .node-inspection-drawer {
           background: var(--bg-surface);
           border: 1px solid var(--border-subtle);
-          border-radius: var(--radius-md);
-          padding: 1.25rem 1.5rem;
+          border-radius: var(--radius-lg);
+          padding: 1.5rem 1.75rem;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 1.25rem;
         }
 
-        .inspector-header {
+        .drawer-top-row {
           display: flex;
           align-items: center;
           justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 1rem;
         }
 
-        .inspector-badge {
-          font-size: 0.7rem;
-          color: var(--text-muted);
-          text-transform: uppercase;
-          font-weight: 700;
+        .drawer-kicker {
+          font-size: 0.68rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          color: var(--accent-ai);
         }
 
-        .inspector-title {
-          font-size: 1.1rem;
+        .drawer-heading-wrap {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          margin-top: 0.2rem;
+        }
+
+        .drawer-concept-title {
+          font-size: 1.35rem;
           color: var(--text-primary);
         }
 
-        .inspector-score-pill {
+        .badge-status-mastered { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid var(--mastery-high); }
+        .badge-status-developing { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid var(--mastery-med); }
+        .badge-status-weak { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid var(--mastery-low); }
+        .badge-status-blocked { background: var(--bg-elevated); color: var(--text-muted); border: 1px solid var(--border-medium); }
+
+        .drawer-score-gauge {
           display: flex;
           flex-direction: column;
           align-items: flex-end;
         }
 
-        .inspector-score-num {
-          font-size: 1.5rem;
+        .gauge-score-value {
+          font-size: 1.8rem;
           font-weight: 800;
           font-family: var(--font-display);
           line-height: 1;
         }
 
-        .inspector-score-lbl {
+        .gauge-score-label {
           font-size: 0.68rem;
           color: var(--text-muted);
+          text-transform: uppercase;
         }
 
-        .dimensions-bar-list {
+        /* 4 Dimensions Grid */
+        .drawer-dimensions-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 1rem;
+        }
+
+        .dimension-unit {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          gap: 0.35rem;
         }
 
-        .dim-row {
-          display: grid;
-          grid-template-columns: 100px 1fr 40px;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .dim-lbl {
+        .dim-head {
+          display: flex;
+          justify-content: space-between;
           font-size: 0.78rem;
-          color: var(--text-muted);
-        }
-
-        .dim-val {
-          font-size: 0.78rem;
-          font-weight: 700;
           color: var(--text-secondary);
-          text-align: right;
         }
 
-        .inspector-mistake-box {
+        .dim-head strong {
+          color: var(--text-primary);
+        }
+
+        /* Misconception Callout */
+        .drawer-misconception-callout {
           background: rgba(245, 158, 11, 0.08);
           border-left: 3px solid #f59e0b;
           border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-          padding: 0.6rem 0.85rem;
+          padding: 0.85rem 1rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+
+        .misc-callout-header {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          color: #fbbf24;
           font-size: 0.82rem;
         }
 
-        .mistake-title {
-          display: flex;
-          align-items: center;
-          gap: 0.35rem;
-          color: #fbbf24;
-          font-weight: 700;
-          margin-bottom: 0.2rem;
+        .misc-alert-icon { color: #fbbf24; flex-shrink: 0; }
+
+        .misc-callout-text {
+          font-size: 0.85rem;
+          color: var(--text-primary);
+          line-height: 1.45;
         }
 
-        .mistake-icon { color: #fbbf24; }
-
-        .mistake-text {
-          color: var(--text-secondary);
-        }
-
-        .inspector-actions {
+        /* Footer */
+        .drawer-actions-footer {
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: space-between;
+          border-top: 1px solid var(--border-subtle);
+          padding-top: 1rem;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .prereq-note {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          font-size: 0.78rem;
+          color: var(--text-muted);
+        }
+
+        .footer-btns-right {
+          display: flex;
+          align-items: center;
           gap: 0.75rem;
+          margin-left: auto;
         }
 
-        @media (max-width: 640px) {
-          .graph-stage { height: 260px; }
-          .dim-row { grid-template-columns: 80px 1fr 35px; }
+        @media (max-width: 820px) {
+          .drawer-dimensions-grid { grid-template-columns: 1fr 1fr; }
+          .neural-stage-canvas { height: 280px; }
         }
       `}</style>
     </div>

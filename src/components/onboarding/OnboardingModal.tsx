@@ -215,9 +215,9 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             </div>
 
             <div className="diagnostic-pitch-callout">
-              <AiOrb size={20} state="teaching" />
+              <AiOrb size={22} state="teaching" />
               <div>
-                <strong>"Let's discover how you learn."</strong>
+                <strong>"I'll first understand how you think. Then I'll build your learning path."</strong>
                 <p>We will now start a 5-minute adaptive assessment to pinpoint your exact strengths and cognitive gaps.</p>
               </div>
             </div>

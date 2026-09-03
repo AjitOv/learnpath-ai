@@ -47,14 +47,31 @@ export const DiagnosticReportModal: React.FC<DiagnosticReportModalProps> = ({
           </div>
         </div>
 
-        {/* AI Insight Box */}
-        <div className="ai-report-insight-box">
-          <div className="insight-title-row">
-            <Sparkles size={15} className="sparkle-gold" />
-            <strong>AI Diagnostic Insight:</strong>
+        {/* YOUR LEARNING SNAPSHOT (Section 15) */}
+        <div className="learning-snapshot-row">
+          <div className="snapshot-header-lead">
+            <span className="snapshot-kicker">YOUR LEARNING SNAPSHOT</span>
           </div>
-          <blockquote className="insight-quote-text">
-            "{result.aiInsightSummary[language] || result.aiInsightSummary.en}"
+          <div className="snapshot-score-pills">
+            <div className="snap-pill green">
+              <span className="snap-topic">Fractions</span>
+              <span className="snap-score">82%</span>
+            </div>
+            <div className="snap-pill red">
+              <span className="snap-topic">Decimals</span>
+              <span className="snap-score">43%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* THE SIGNATURE WOW MOMENT (Section 15) */}
+        <div className="ai-report-insight-box wow-moment-box">
+          <div className="insight-title-row">
+            <AiOrb size={18} state="thinking" />
+            <h3 className="wow-headline">“I found something interesting.”</h3>
+          </div>
+          <blockquote className="insight-quote-text wow-quote">
+            “Your decimal calculations are strong. The difficulty appears when decimals are used inside word problems.”
           </blockquote>
         </div>
       </div>
@@ -219,21 +236,88 @@ export const DiagnosticReportModal: React.FC<DiagnosticReportModalProps> = ({
           color: var(--accent-ai);
         }
 
+        .learning-snapshot-row {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          background: var(--bg-surface);
+          border: 1px solid var(--border-subtle);
+          border-radius: var(--radius-md);
+          padding: 1rem 1.25rem;
+        }
+
+        .snapshot-kicker {
+          font-size: 0.68rem;
+          font-weight: 800;
+          color: var(--text-muted);
+          letter-spacing: 0.08em;
+        }
+
+        .snapshot-score-pills {
+          display: flex;
+          gap: 1rem;
+        }
+
+        .snap-pill {
+          display: flex;
+          align-items: center;
+          gap: 0.65rem;
+          background: var(--bg-card);
+          border: 1px solid var(--border-subtle);
+          padding: 0.5rem 0.85rem;
+          border-radius: var(--radius-sm);
+        }
+
+        .snap-pill.green { border-color: rgba(16, 185, 129, 0.4); }
+        .snap-pill.red { border-color: rgba(244, 63, 94, 0.4); }
+
+        .snap-topic {
+          font-size: 0.85rem;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+
+        .snap-score {
+          font-family: var(--font-mono);
+          font-weight: 800;
+          font-size: 0.95rem;
+        }
+
+        .snap-pill.green .snap-score { color: var(--mastery-high); }
+        .snap-pill.red .snap-score { color: var(--mastery-low); }
+
         .ai-report-insight-box {
           background: var(--accent-ai-subtle);
           border: 1px solid var(--border-ai);
           border-radius: var(--radius-md);
-          padding: 1.1rem 1.35rem;
+          padding: 1.25rem 1.5rem;
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 0.5rem;
+        }
+
+        .wow-moment-box {
+          background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(124, 58, 237, 0.08));
+          border-color: var(--accent-ai);
+        }
+
+        .wow-headline {
+          font-size: 1.15rem;
+          color: var(--text-primary);
+          font-weight: 700;
+        }
+
+        .wow-quote {
+          font-size: 1.08rem;
+          line-height: 1.55;
+          color: var(--text-primary);
         }
 
         .insight-title-row {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
-          font-size: 0.82rem;
+          gap: 0.5rem;
+          font-size: 0.85rem;
           color: var(--text-primary);
         }
 

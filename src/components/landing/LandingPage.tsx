@@ -92,18 +92,17 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         </h1>
 
         <p className="hero-editorial-sub animate-slide-up">
-          It discovers what you don't understand, builds your learning path, 
-          and adapts every lesson as you improve.
+          Your path is different. LearnPath AI finds what you don't understand, explains why, and builds the fastest path to mastery.
         </p>
 
         <div className="hero-actions-group animate-slide-up">
           <button className="btn btn-primary btn-lg" onClick={onStartAssessment}>
-            <span>Take the AI Assessment</span>
+            <span>Start Your Learning Journey</span>
             <ArrowRight size={18} />
           </button>
           <button className="btn btn-secondary btn-lg" onClick={onStartPitchDemo}>
             <Play size={15} fill="currentColor" />
-            <span>3-Min Pitch Demo</span>
+            <span>See How It Works</span>
           </button>
         </div>
 

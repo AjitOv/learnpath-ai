@@ -26,13 +26,14 @@ export const RoadmapView: React.FC<RoadmapViewProps> = ({
   onSelectNode,
   onStartTutor,
 }) => {
-  // Weekly journey mapping per Section 12
+  // Living visual learning journey per Section 11
   const journeyDays = [
-    { dayName: 'Monday', topic: 'Fractions Fundamentals', status: 'completed' },
-    { dayName: 'Tuesday', topic: 'Decimals: Real-World Money', status: 'completed' },
-    { dayName: 'Wednesday', topic: 'Ratio & Proportion Setup', status: 'completed' },
-    { dayName: 'Thursday', topic: 'Decimal Word Problems', status: 'active', isToday: true },
-    { dayName: 'Friday', topic: 'Composite Synthesis & Review', status: 'upcoming' },
+    { dayName: 'DAY 1', topic: 'Identify Root Misconception', status: 'completed', desc: 'Baseline diagnostic uncovered place-value shift in currency problems.' },
+    { dayName: 'DAY 2', topic: 'Rebuild Place-Value Foundation', status: 'active', isToday: true, desc: 'Visual column scaffolding to align decimals (₹50.00 - ₹12.50 = ₹37.50).' },
+    { dayName: 'DAY 3', topic: 'Guided Word Problems', status: 'upcoming', desc: 'Interactive receipt and rate scenarios with Socratic checks.' },
+    { dayName: 'DAY 4', topic: 'Independent Application', status: 'upcoming', desc: 'Unassisted multi-step real-world problems.' },
+    { dayName: 'DAY 7', topic: 'Retention Check', status: 'upcoming', desc: 'Spaced retrieval check to ensure permanent conceptual lock-in.' },
+    { dayName: 'DAY 14', topic: 'Mastery Verification', status: 'upcoming', desc: 'Final comprehensive calibration to unlock Class 10 Advanced tier.' },
   ];
 
   return (
